@@ -5,3 +5,6 @@ __pycache__/
 report.html
 .env
 *.egg-info/
+
+allure-results/
+allure-report/

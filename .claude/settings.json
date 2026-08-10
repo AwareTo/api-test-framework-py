@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh config *)",
+      "Read(//Users/uri.hacohen/.config/gh/**)",
+      "Bash(GH_HOST=github.com gh repo create AwareTo/api-test-framework-py --private --source=. --remote=origin --push)",
+      "Bash(GH_HOST=github.com git push -u origin main)",
+      "Bash(git push *)",
+      "Bash(gh secret *)",
+      "Bash(GH_HOST=github.com gh secret list --repo AwareTo/api-test-framework-py)",
+      "Bash(GH_HOST=github.com gh run list --repo AwareTo/api-test-framework-py --limit 10)",
+      "Bash(GH_HOST=github.com gh workflow run api-tests.yml --repo AwareTo/api-test-framework-py)",
+      "Bash(git commit *)",
+      "Bash(GH_HOST=github.com gh run view 31314198766 --repo AwareTo/api-test-framework-py)",
+      "Bash(git add *)",
+      "WebFetch(domain:allurereport.org)",
+      "WebFetch(domain:pytest-with-eric.com)",
+      "WebFetch(domain:woteq.com)",
+      "WebFetch(domain:github.com)",
+      "Bash(brew install *)",
+      "Bash(allure --version)",
+      "Bash(allure generate *)",
+      "Bash(open /Users/uri.hacohen/dev/new-job/pyhton-api/allure-report/index.html)"
+    ]
+  }
+}

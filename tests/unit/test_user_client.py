@@ -1,6 +1,7 @@
 """Unit tests for UserClient using respx to mock HTTP calls."""
 import json
 
+import allure
 import httpx
 import pytest
 import respx
@@ -20,6 +21,11 @@ def user_client() -> UserClient:
     client.close()
 
 
+@allure.epic("User API")
+@allure.feature("Get User")
+@allure.story("Unit - response deserialization")
+@allure.title("get_user() maps JSON response onto UserResponse model")
+@allure.severity(allure.severity_level.CRITICAL)
 @respx.mock
 def test_get_user_returns_mapped_model(user_client: UserClient) -> None:
     respx.get(f"{BASE_URL}/api/users/2").mock(
@@ -48,6 +54,11 @@ def test_get_user_returns_mapped_model(user_client: UserClient) -> None:
     assert user.avatar == "https://reqres.in/img/faces/2-image.jpg"
 
 
+@allure.epic("User API")
+@allure.feature("Get User")
+@allure.story("Unit - error handling")
+@allure.title("get_user() raises NotFoundError on 404")
+@allure.severity(allure.severity_level.NORMAL)
 @respx.mock
 def test_get_user_raises_not_found_error_on_failure(user_client: UserClient) -> None:
     respx.get(f"{BASE_URL}/api/users/999").mock(return_value=httpx.Response(404, text="not found"))
@@ -58,6 +69,11 @@ def test_get_user_raises_not_found_error_on_failure(user_client: UserClient) -> 
     assert exc_info.value.status_code == 404
 
 
+@allure.epic("User API")
+@allure.feature("Create User")
+@allure.story("Unit - payload serialization + response deserialization")
+@allure.title("create_user() sends correct JSON body and maps response onto UserCreateResponse")
+@allure.severity(allure.severity_level.CRITICAL)
 @respx.mock
 def test_create_user_sends_payload_and_returns_mapped_model(user_client: UserClient) -> None:
     route = respx.post(f"{BASE_URL}/api/users").mock(
@@ -77,6 +93,11 @@ def test_create_user_sends_payload_and_returns_mapped_model(user_client: UserCli
     assert result.createdAt == "2026-08-09T12:00:00.000Z"
 
 
+@allure.epic("User API")
+@allure.feature("Delete User")
+@allure.story("Unit - boolean return logic")
+@allure.title("delete_user() returns True on 204 No Content")
+@allure.severity(allure.severity_level.NORMAL)
 @respx.mock
 def test_delete_user_returns_true_on_204(user_client: UserClient) -> None:
     respx.delete(f"{BASE_URL}/api/users/2").mock(return_value=httpx.Response(204))

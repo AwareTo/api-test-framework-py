@@ -1,7 +1,10 @@
-"""Shared pytest fixtures and pytest-html reporting hooks for the test suite."""
+"""Shared pytest fixtures and Allure environment setup for the test suite."""
+import os
 from datetime import datetime, timezone
-from typing import Iterator, List
+from pathlib import Path
+from typing import Iterator
 
+import allure
 import pytest
 from faker import Faker
 
@@ -32,14 +35,22 @@ def random_user_payload() -> UserCreate:
     return UserCreate(name=_faker.name(), job=_faker.job())
 
 
-def pytest_html_results_table_header(cells: List[str]) -> None:
-    """Add "Timestamp" and "Environment" columns to the pytest-html results table."""
-    cells.insert(2, "<th>Timestamp</th>")
-    cells.insert(3, "<th>Environment</th>")
+def pytest_configure(config: pytest.Config) -> None:
+    """Write allure/environment.properties so the report shows target env metadata."""
+    alluredir = config.getoption("--alluredir", default=None, skip=True)
+    if not alluredir:
+        return
 
+    props = {
+        "Environment": settings.environment,
+        "Base URL": str(settings.base_url),
+        "Executed At": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "Python": os.popen("python --version").read().strip(),  # noqa: S605
+    }
 
-def pytest_html_results_table_row(report: pytest.TestReport, cells: List[str]) -> None:
-    """Populate the "Timestamp" and "Environment" columns for each result row."""
-    timestamp = datetime.now(timezone.utc).isoformat(timespec="seconds")
-    cells.insert(2, f"<td>{timestamp}</td>")
-    cells.insert(3, f"<td>{settings.environment}</td>")
+    env_file = Path(alluredir) / "environment.properties"
+    env_file.parent.mkdir(parents=True, exist_ok=True)
+    env_file.write_text(
+        "\n".join(f"{k}={v}" for k, v in props.items()) + "\n",
+        encoding="utf-8",
+    )
