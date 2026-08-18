@@ -98,6 +98,12 @@ jobs:
             --timestamp "${{ steps.timestamp.outputs.now }}" \
             --retain "${{ env.PAGES_RETAIN_RUNS }}"
 
+      - name: Upload Allure report for Pages
+        uses: actions/upload-pages-artifact@v3
+        if: always() && github.event_name != 'pull_request'
+        with:
+          path: gh-pages
+
       - name: Publish gh-pages branch
         if: always() && github.event_name != 'pull_request'
         run: |
@@ -110,8 +116,22 @@ jobs:
           git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
           git push -f origin HEAD:gh-pages
 
+  deploy-pages:
+    needs: test
+    if: always() && github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
       - name: Add report link to job summary
-        if: always() && github.event_name != 'pull_request'
         run: |
           echo "### 📊 Allure Report" >> "$GITHUB_STEP_SUMMARY"
-          echo "[View latest report](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/latest/index.html) · [Browse all runs](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/)" >> "$GITHUB_STEP_SUMMARY"
+          echo "[Latest run](${{ steps.deployment.outputs.page_url }}latest/index.html) · [Browse all runs](${{ steps.deployment.outputs.page_url }})" >> "$GITHUB_STEP_SUMMARY"
