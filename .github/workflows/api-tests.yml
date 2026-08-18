@@ -7,9 +7,14 @@ on:
     branches: [main]
   workflow_dispatch:
 
+env:
+  PAGES_RETAIN_RUNS: "20"
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     strategy:
       matrix:
         python-version: ["3.11"]
@@ -39,14 +44,14 @@ jobs:
 
       - name: Generate Allure report
         if: always()
-        run: allure generate allure-results --single-file --clean -o allure-report
+        run: allure generate allure-results --clean -o allure-report
 
       - name: Upload Allure report as artifact
         uses: actions/upload-artifact@v4
         if: always()
         with:
           name: allure-report
-          path: allure-report/index.html
+          path: allure-report
 
       - name: Upload raw Allure results as artifact
         uses: actions/upload-artifact@v4
@@ -54,3 +59,59 @@ jobs:
         with:
           name: allure-results
           path: allure-results
+
+      - name: Record run timestamp
+        if: always() && github.event_name != 'pull_request'
+        id: timestamp
+        run: echo "now=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout existing gh-pages branch
+        uses: actions/checkout@v4
+        if: always() && github.event_name != 'pull_request'
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      - name: Ensure gh-pages working copy exists
+        if: always() && github.event_name != 'pull_request'
+        run: |
+          if [ ! -d gh-pages/.git ]; then
+            rm -rf gh-pages
+            mkdir -p gh-pages
+            cd gh-pages
+            git init -q
+            git checkout -q -b gh-pages
+          fi
+
+      - name: Merge this run's report into the Pages site
+        if: always() && github.event_name != 'pull_request'
+        run: |
+          python3 scripts/build_pages_site.py \
+            --site-dir gh-pages \
+            --report-dir allure-report \
+            --run-number "${{ github.run_number }}" \
+            --sha "${{ github.sha }}" \
+            --actor "${{ github.actor }}" \
+            --event "${{ github.event_name }}" \
+            --repo "${{ github.repository }}" \
+            --timestamp "${{ steps.timestamp.outputs.now }}" \
+            --retain "${{ env.PAGES_RETAIN_RUNS }}"
+
+      - name: Publish gh-pages branch
+        if: always() && github.event_name != 'pull_request'
+        run: |
+          cd gh-pages
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          git commit -m "Publish Allure report for run #${{ github.run_number }}" || echo "Nothing to commit"
+          git remote remove origin 2>/dev/null || true
+          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          git push -f origin HEAD:gh-pages
+
+      - name: Add report link to job summary
+        if: always() && github.event_name != 'pull_request'
+        run: |
+          echo "### 📊 Allure Report" >> "$GITHUB_STEP_SUMMARY"
+          echo "[View latest report](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/latest/index.html) · [Browse all runs](https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/)" >> "$GITHUB_STEP_SUMMARY"
