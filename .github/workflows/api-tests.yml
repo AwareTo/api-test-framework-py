@@ -26,10 +26,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
 
       - name: Set up Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7.0.0
         with:
           python-version: "3.11"
           cache: "pip"
@@ -60,10 +60,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7.0.0
         with:
           python-version: ${{ matrix.python-version }}
           cache: "pip"
@@ -90,14 +90,14 @@ jobs:
         run: allure generate allure-results --clean -o allure-report
 
       - name: Upload Allure report as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.1
         if: always()
         with:
           name: allure-report
           path: allure-report
 
       - name: Upload raw Allure results as artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.1
         if: always()
         with:
           name: allure-results
@@ -105,7 +105,7 @@ jobs:
 
       - name: Upload Execution Logs on Failure
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7.0.1
         with:
           name: test-failure-logs
           path: logs/
@@ -117,7 +117,7 @@ jobs:
         run: echo "now=$(date -u +%Y-%m-%dT%H:%M:%SZ)" >> "$GITHUB_OUTPUT"
 
       - name: Checkout existing gh-pages branch
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7.0.1
         if: always() && github.event_name != 'pull_request'
         continue-on-error: true
         with:
@@ -180,7 +180,7 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v4
+        uses: actions/deploy-pages@v5.0.0
 
       - name: Add report link to job summary
         run: |
