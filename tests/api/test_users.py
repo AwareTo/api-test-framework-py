@@ -10,6 +10,7 @@ from src.models.user import UserCreate, UserCreateResponse, UserResponse
 
 @allure.epic("User API")
 @allure.feature("Get User")
+@pytest.mark.integration
 class TestGetUser:
     @allure.story("Successful retrieval")
     @allure.title("GET /api/users/2 returns a valid UserResponse")
@@ -37,6 +38,7 @@ class TestGetUser:
 
 @allure.epic("User API")
 @allure.feature("Create User")
+@pytest.mark.integration
 class TestCreateUser:
     @allure.story("Successful creation")
     @allure.title("POST /api/users returns UserCreateResponse with matching fields")
@@ -54,6 +56,7 @@ class TestCreateUser:
 
 @allure.epic("User API")
 @allure.feature("Delete User")
+@pytest.mark.integration
 class TestDeleteUser:
     @allure.story("Successful deletion")
     @allure.title("DELETE /api/users/2 returns True")
