@@ -8,7 +8,7 @@ import respx
 
 from src.clients.user_client import UserClient
 from src.config import settings
-from src.exceptions import NotFoundError
+from src.exceptions import NotFoundError, SchemaValidationError
 from src.models.user import UserCreate, UserCreateResponse, UserResponse
 
 BASE_URL = str(settings.base_url).rstrip("/")
@@ -67,6 +67,21 @@ def test_get_user_raises_not_found_error_on_failure(user_client: UserClient) -> 
         user_client.get_user(999)
 
     assert exc_info.value.status_code == 404
+
+
+@allure.epic("User API")
+@allure.feature("Get User")
+@allure.story("Unit - schema validation")
+@allure.title("get_user() raises SchemaValidationError when the response doesn't match UserResponse")
+@allure.severity(allure.severity_level.NORMAL)
+@respx.mock
+def test_get_user_raises_schema_validation_error_on_malformed_response(user_client: UserClient) -> None:
+    respx.get(f"{BASE_URL}/api/users/2").mock(
+        return_value=httpx.Response(200, json={"data": {"id": "not-an-int"}})
+    )
+
+    with pytest.raises(SchemaValidationError):
+        user_client.get_user(2)
 
 
 @allure.epic("User API")
