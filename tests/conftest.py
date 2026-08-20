@@ -36,7 +36,16 @@ def random_user_payload() -> UserCreate:
 
 
 def pytest_configure(config: pytest.Config) -> None:
-    """Write allure/environment.properties so the report shows target env metadata."""
+    """Write allure/environment.properties so the report shows target env metadata.
+
+    Guarded for pytest-xdist: this hook fires once per worker process too when running
+    under `-n`, and every worker would race to write the same file. `workerinput` is only
+    present on worker configs, so this skips the write there and lets the controller
+    process (or a plain non-parallel run) do it once.
+    """
+    if hasattr(config, "workerinput"):
+        return
+
     alluredir = config.getoption("--alluredir", default=None, skip=True)
     if not alluredir:
         return

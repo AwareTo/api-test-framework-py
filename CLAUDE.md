@@ -20,4 +20,7 @@
 - Run all tests: `pytest`
 - Run unit tests only: `pytest tests/unit`
 - Run integration tests: `pytest tests/api`
+- Run unit tests in parallel: `pytest tests/unit -n auto` (requires `pytest-xdist`; integration
+  tests in `tests/api` stay serial — they hit a live API, so `API_PYTEST_WORKERS` defaults to `1`
+  in CI, independently of `UNIT_PYTEST_WORKERS`)
 - Generate HTML report: `pytest --html=report.html --self-contained-html`

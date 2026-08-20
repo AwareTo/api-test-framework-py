@@ -6,6 +6,17 @@ on:
   pull_request:
     branches: [main]
   workflow_dispatch:
+    inputs:
+      unit_pytest_workers:
+        description: "Override UNIT_PYTEST_WORKERS (pytest-xdist -n value for tests/unit). Default: auto."
+        required: false
+        type: string
+      api_pytest_workers:
+        description: >
+          Override API_PYTEST_WORKERS (pytest-xdist -n value for tests/api). Default: 1 (serial) —
+          this step hits the real API, so only raise it deliberately when testing rate-limit behavior.
+        required: false
+        type: string
 
 env:
   PAGES_RETAIN_RUNS: "20"
@@ -43,6 +54,9 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.11"]
+    env:
+      UNIT_PYTEST_WORKERS: ${{ github.event.inputs.unit_pytest_workers }}
+      API_PYTEST_WORKERS: ${{ github.event.inputs.api_pytest_workers }}
 
     steps:
       - name: Checkout code
@@ -61,11 +75,15 @@ jobs:
       - name: Install dependencies
         run: pip install -e ".[dev]"
 
-      - name: Run tests
+      - name: Run unit tests (parallel)
+        run: pytest tests/unit --alluredir=allure-results -n "${UNIT_PYTEST_WORKERS:-auto}"
+
+      - name: Run live API tests (serial)
+        if: always()
         env:
           BASE_URL: ${{ secrets.BASE_URL }}
           API_KEY: ${{ secrets.API_KEY }}
-        run: pytest --alluredir=allure-results
+        run: pytest tests/api --alluredir=allure-results -n "${API_PYTEST_WORKERS:-1}"
 
       - name: Generate Allure report
         if: always()

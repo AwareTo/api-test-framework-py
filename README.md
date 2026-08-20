@@ -45,10 +45,16 @@ tests/
 
 3. Run the tests:
    ```bash
-   pytest                  # everything
-   pytest tests/unit       # unit tests only, no network/API key needed
-   pytest tests/api        # live tests against the real API
+   pytest                       # everything
+   pytest tests/unit            # unit tests only, no network/API key needed
+   pytest tests/api             # live tests against the real API
+   pytest tests/unit -n auto    # unit tests in parallel (pytest-xdist)
    ```
+   Unit tests are safe to parallelize — no shared state, and xdist runs each worker as its own
+   process. Live tests against `tests/api/` are kept serial in CI (`-n 1`) to avoid rate-limiting
+   the real API. In CI, override each independently via `UNIT_PYTEST_WORKERS` / `API_PYTEST_WORKERS`
+   (or the matching inputs on a manual `workflow_dispatch` run) — they're separate knobs on purpose,
+   so bumping unit-test parallelism can never accidentally also parallelize the live-API step.
 
 4. Generate an Allure report locally:
    ```bash
