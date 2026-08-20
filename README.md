@@ -17,8 +17,8 @@ publishes a live report site on every push — all wired together end to end.
 ## ✨ Features
 
 ### 🧱 Typed, layered architecture
-- Service-client pattern (`BaseClient` → `UserClient`) abstracts every HTTP call behind typed
-  methods — no test ever touches raw `httpx` or raw JSON.
+- Service-client pattern (`BaseClient` → `UserClient`, `AuthClient`) abstracts every HTTP call behind
+  typed methods — no test ever touches raw `httpx` or raw JSON.
 - Every response is mapped onto a **Pydantic v2** model; a schema mismatch raises a
   framework-specific `SchemaValidationError` instead of leaking a raw dict or a bare pydantic error.
 - Centralized, typed settings via **pydantic-settings** (`.env`-driven), with `api_key` stored as
@@ -89,7 +89,7 @@ publishes a live report site on every push — all wired together end to end.
 
 ```
 src/
-  clients/     # Service client classes (BaseClient, UserClient) wrapping API endpoints
+  clients/     # Service client classes (BaseClient, UserClient, AuthClient) wrapping API endpoints
   models/      # Pydantic models for requests/responses
   exceptions.py
   config.py    # Centralized settings via pydantic-settings

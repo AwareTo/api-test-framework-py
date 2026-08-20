@@ -6,18 +6,28 @@ import json
 import time
 from datetime import UTC, datetime
 from types import TracebackType
-from typing import Any
+from typing import Any, TypeVar
 
 import allure
 import httpx
+from pydantic import BaseModel
+from pydantic import ValidationError as PydanticValidationError
 
-from src.exceptions import APIError, NotFoundError, UnauthorizedError, ValidationError
+from src.exceptions import (
+    APIError,
+    NotFoundError,
+    SchemaValidationError,
+    UnauthorizedError,
+    ValidationError,
+)
 
 _STATUS_TO_EXCEPTION: dict[int, type[APIError]] = {
     401: UnauthorizedError,
     404: NotFoundError,
     422: ValidationError,
 }
+
+ModelT = TypeVar("ModelT", bound=BaseModel)
 
 # Header names whose values must never be attached verbatim to an Allure report —
 # reports are published straight to public GitHub Pages, so secrets can't ride along.
@@ -197,6 +207,21 @@ class BaseClient:
 
         exception_cls = _STATUS_TO_EXCEPTION.get(response.status_code, APIError)
         raise exception_cls(response.status_code, response.text)
+
+    @staticmethod
+    def _validate(model: type[ModelT], data: Any) -> ModelT:
+        """Map raw response data onto a Pydantic model, translating schema mismatches
+        into a framework-specific error instead of letting a raw pydantic one leak out.
+
+        Lives on BaseClient rather than any one concrete client since it's generic to
+        "response body -> typed model", not specific to any endpoint's domain — every
+        concrete client (UserClient, AuthClient, ...) inherits it as-is."""
+        try:
+            return model.model_validate(data)
+        except PydanticValidationError as exc:
+            raise SchemaValidationError(
+                f"Response failed schema validation for {model.__name__}: {exc}"
+            ) from exc
 
     def close(self) -> None:
         self._client.close()

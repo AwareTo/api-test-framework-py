@@ -2,17 +2,9 @@
 
 from __future__ import annotations
 
-from typing import Any, TypeVar
-
-from pydantic import BaseModel
-from pydantic import ValidationError as PydanticValidationError
-
 from src.clients.base_client import BaseClient
 from src.config import settings
-from src.exceptions import SchemaValidationError
 from src.models.user import UserCreate, UserCreateResponse, UserResponse
-
-ModelT = TypeVar("ModelT", bound=BaseModel)
 
 
 class UserClient(BaseClient):
@@ -36,14 +28,3 @@ class UserClient(BaseClient):
     def delete_user(self, user_id: int) -> bool:
         response = self.delete(f"/api/users/{user_id}")
         return response.status_code == 204
-
-    @staticmethod
-    def _validate(model: type[ModelT], data: Any) -> ModelT:
-        """Map raw response data onto a Pydantic model, translating schema mismatches
-        into a framework-specific error instead of letting a raw pydantic one leak out."""
-        try:
-            return model.model_validate(data)
-        except PydanticValidationError as exc:
-            raise SchemaValidationError(
-                f"Response failed schema validation for {model.__name__}: {exc}"
-            ) from exc

@@ -5,11 +5,20 @@ from collections.abc import Iterator
 import httpx
 import pytest
 import respx
+from pydantic import BaseModel
 
 from src.clients.base_client import BaseClient
-from src.exceptions import APIError, NotFoundError
+from src.exceptions import APIError, NotFoundError, SchemaValidationError
 
 BASE_URL = "https://example.test"
+
+
+class _DummyModel(BaseModel):
+    """Minimal model used to exercise _validate() directly, independent of any
+    concrete client's domain models."""
+
+    id: int
+    name: str
 
 
 @pytest.fixture
@@ -145,3 +154,18 @@ def test_context_manager_closes_client() -> None:
         assert not client._client.is_closed
 
     assert client._client.is_closed
+
+
+def test_validate_maps_matching_data_onto_model() -> None:
+    """_validate() lives on BaseClient (not any one concrete client) precisely so this
+    works standalone, with no HTTP call and no subclass involved."""
+    result = BaseClient._validate(_DummyModel, {"id": 1, "name": "widget"})
+
+    assert isinstance(result, _DummyModel)
+    assert result.id == 1
+    assert result.name == "widget"
+
+
+def test_validate_raises_schema_validation_error_on_mismatched_data() -> None:
+    with pytest.raises(SchemaValidationError):
+        BaseClient._validate(_DummyModel, {"id": "not-an-int"})

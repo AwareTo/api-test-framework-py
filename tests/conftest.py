@@ -8,6 +8,7 @@ from pathlib import Path
 import pytest
 from faker import Faker
 
+from src.clients.auth_client import AuthClient
 from src.clients.user_client import UserClient
 from src.config import Settings, settings
 from src.models.user import UserCreate
@@ -25,6 +26,14 @@ def config() -> Settings:
 def user_client() -> Iterator[UserClient]:
     """Function-scoped UserClient with guaranteed cleanup after each test."""
     client = UserClient()
+    yield client
+    client.close()
+
+
+@pytest.fixture
+def auth_client() -> Iterator[AuthClient]:
+    """Function-scoped AuthClient with guaranteed cleanup after each test."""
+    client = AuthClient()
     yield client
     client.close()
 
