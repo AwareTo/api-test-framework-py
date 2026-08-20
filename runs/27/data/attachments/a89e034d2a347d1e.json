@@ -1,0 +1,7 @@
+{
+  "timestamp": "2026-08-20T17:17:15.510+00:00",
+  "method": "POST",
+  "path": "/items",
+  "error_type": "ConnectError",
+  "error_message": "connection refused"
+}
