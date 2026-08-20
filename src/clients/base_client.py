@@ -20,6 +20,9 @@ from src.exceptions import (
     UnauthorizedError,
     ValidationError,
 )
+from src.utils.logger import get_logger
+
+_logger = get_logger(__name__)
 
 _STATUS_TO_EXCEPTION: dict[int, type[APIError]] = {
     401: UnauthorizedError,
@@ -29,9 +32,11 @@ _STATUS_TO_EXCEPTION: dict[int, type[APIError]] = {
 
 ModelT = TypeVar("ModelT", bound=BaseModel)
 
-# Header names whose values must never be attached verbatim to an Allure report —
-# reports are published straight to public GitHub Pages, so secrets can't ride along.
+# Header/body-key names whose values must never be attached verbatim to an Allure
+# report — reports are published straight to public GitHub Pages, so secrets (or, for
+# bodies, plaintext credentials like AuthClient's `password`) can't ride along.
 _SENSITIVE_HEADERS = {"x-api-key", "authorization"}
+_SENSITIVE_BODY_KEYS = {"password"}
 _REDACTED = "***REDACTED***"
 
 # Retries are only safe for HTTP-idempotent verbs — repeating a GET/PUT/DELETE has the
@@ -91,6 +96,7 @@ class BaseClient:
             attempt = 1
             while True:
                 started_at = datetime.now(UTC)
+                _logger.debug("http_request_started", method=method, path=path, attempt=attempt)
                 try:
                     response = send(path, **kwargs)
                 except httpx.TransportError as exc:
@@ -100,7 +106,17 @@ class BaseClient:
                         with allure.step(f"Retry attempt {attempt} of {_MAX_ATTEMPTS}"):
                             self._attach_transport_error(exc, method, path, started_at)
 
+                    _logger.error(
+                        "http_transport_error",
+                        method=method,
+                        path=path,
+                        attempt=attempt,
+                        error_type=type(exc).__name__,
+                        error_message=str(exc),
+                    )
+
                     if not (retryable and attempt < _MAX_ATTEMPTS):
+                        _logger.error("http_retries_exhausted", method=method, path=path, attempt=attempt)
                         raise
 
                     time.sleep(_RETRY_BACKOFF_SECONDS * (2 ** (attempt - 1)))
@@ -117,9 +133,35 @@ class BaseClient:
                     retryable and response.status_code in _RETRYABLE_STATUS_CODES and attempt < _MAX_ATTEMPTS
                 )
                 if not should_retry:
+                    if retryable and response.status_code in _RETRYABLE_STATUS_CODES:
+                        _logger.error(
+                            "http_retries_exhausted",
+                            method=method,
+                            path=path,
+                            attempt=attempt,
+                            status_code=response.status_code,
+                        )
+                    else:
+                        _logger.info(
+                            "http_response_received",
+                            method=method,
+                            path=path,
+                            attempt=attempt,
+                            status_code=response.status_code,
+                            latency_ms=round(response.elapsed.total_seconds() * 1000, 1),
+                        )
                     return self._check_response(response)
 
-                time.sleep(_RETRY_BACKOFF_SECONDS * (2 ** (attempt - 1)))
+                backoff_seconds = _RETRY_BACKOFF_SECONDS * (2 ** (attempt - 1))
+                _logger.warning(
+                    "http_retry_scheduled",
+                    method=method,
+                    path=path,
+                    attempt=attempt,
+                    backoff_seconds=backoff_seconds,
+                    status_code=response.status_code,
+                )
+                time.sleep(backoff_seconds)
                 attempt += 1
 
     def _attach_http_details(self, response: httpx.Response, started_at: datetime) -> None:
@@ -173,6 +215,18 @@ class BaseClient:
         }
 
     @staticmethod
+    def _redact_body(body: Any) -> Any:
+        """Mask sensitive keys (e.g. `password`) in a JSON request body before it's
+        attached to Allure or logged — mirrors `_redact_headers` but for the body,
+        since Allure reports publish to public GitHub Pages. Non-dict bodies (a raw
+        string that failed to parse as JSON, or None) pass through unchanged."""
+        if not isinstance(body, dict):
+            return body
+        return {
+            key: (_REDACTED if key.lower() in _SENSITIVE_BODY_KEYS else value) for key, value in body.items()
+        }
+
+    @staticmethod
     def _describe_request(request: httpx.Request) -> dict[str, Any]:
         body: Any = None
         if request.content:
@@ -184,7 +238,7 @@ class BaseClient:
             "method": request.method,
             "url": str(request.url),
             "headers": BaseClient._redact_headers(request.headers),
-            "body": body,
+            "body": BaseClient._redact_body(body),
         }
 
     @staticmethod

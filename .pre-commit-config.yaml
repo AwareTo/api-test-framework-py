@@ -17,5 +17,6 @@ repos:
           - pytest>=8.0.0
           - faker>=24.0.0
           - respx>=0.21.0
+          - structlog>=24.1.0
         pass_filenames: false
         args: []

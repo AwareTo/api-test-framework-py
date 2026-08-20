@@ -1,10 +1,12 @@
 """Shared pytest fixtures and Allure environment setup for the test suite."""
 
+import logging
 import os
-from collections.abc import Iterator
+from collections.abc import Generator, Iterator
 from datetime import UTC, datetime
 from pathlib import Path
 
+import allure
 import pytest
 from faker import Faker
 
@@ -12,6 +14,7 @@ from src.clients.auth_client import AuthClient
 from src.clients.user_client import UserClient
 from src.config import Settings, settings
 from src.models.user import UserCreate
+from src.utils.logger import configure_logging
 
 _faker = Faker()
 
@@ -44,14 +47,38 @@ def random_user_payload() -> UserCreate:
     return UserCreate(name=_faker.name(), job=_faker.job())
 
 
-def pytest_configure(config: pytest.Config) -> None:
-    """Write allure/environment.properties so the report shows target env metadata.
+@pytest.fixture(autouse=True)
+def _capture_logs_for_allure(caplog: pytest.LogCaptureFixture) -> None:
+    """Force every test to request `caplog`, and force it to DEBUG.
 
-    Guarded for pytest-xdist: this hook fires once per worker process too when running
-    under `-n`, and every worker would race to write the same file. `workerinput` is only
-    present on worker configs, so this skips the write there and lets the controller
-    process (or a plain non-parallel run) do it once.
+    Two effects, both needed for `pytest_runtest_makereport` below to attach a failure
+    log to Allure: (1) requesting `caplog` here — autouse, on every test — means it's
+    always present in `item.funcargs`, even though no test in this suite requests it
+    directly; pytest only instantiates a fixture on demand, so without this the hook
+    would find nothing to attach. (2) `set_level(DEBUG)` ensures a failure gets full
+    detail regardless of the environment's configured handler level (CI's persisted
+    `logs/test_run.jsonl` file stays at INFO — see `src/utils/logger.py`).
     """
+    caplog.set_level(logging.DEBUG)
+
+
+def pytest_configure(config: pytest.Config) -> None:
+    """Configure structured logging, then write allure/environment.properties.
+
+    Logging is configured in *every* process, including each pytest-xdist worker —
+    `tests/unit` runs under `-n auto`, and that's exactly where the `BaseClient` HTTP
+    calls worth logging execute. `worker_id` (from `workerinput`, present only on
+    worker configs) is folded into the CI log filename so workers don't clobber each
+    other's file.
+
+    The environment.properties write, in contrast, must happen exactly once: every
+    worker would otherwise race to write the same file. `workerinput` distinguishes a
+    worker config from the controller (or a plain non-parallel run), so that write is
+    guarded and skipped on workers.
+    """
+    worker_id = getattr(config, "workerinput", {}).get("workerid")
+    configure_logging(worker_id=worker_id)
+
     if hasattr(config, "workerinput"):
         return
 
@@ -72,3 +99,24 @@ def pytest_configure(config: pytest.Config) -> None:
         "\n".join(f"{k}={v}" for k, v in props.items()) + "\n",
         encoding="utf-8",
     )
+
+
+@pytest.hookimpl(wrapper=True)
+def pytest_runtest_makereport(
+    item: pytest.Item, call: pytest.CallInfo[None]
+) -> Generator[None, pytest.TestReport, pytest.TestReport]:
+    """On a failing test, attach its captured log output to the Allure report.
+
+    `caplog` is guaranteed present in `item.funcargs` by the autouse
+    `_capture_logs_for_allure` fixture above; without that, `funcargs.get("caplog")`
+    would be `None` here since none of this suite's tests request `caplog` directly.
+    `funcargs` isn't part of `pytest.Item`'s typed interface (only function-based test
+    items carry it at runtime), hence the `getattr` fallback rather than `item.funcargs`
+    directly.
+    """
+    rep = yield
+    if rep.when == "call" and rep.failed:
+        caplog = getattr(item, "funcargs", {}).get("caplog")
+        if caplog is not None and caplog.text:
+            allure.attach(caplog.text, name="Failure Log", attachment_type=allure.attachment_type.TEXT)
+    return rep
