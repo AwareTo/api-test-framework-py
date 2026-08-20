@@ -20,6 +20,9 @@ dependencies = [
 dev = [
     "pytest>=8.0.0",
     "respx>=0.21.0",
+    "ruff>=0.6.0",
+    "mypy>=1.11.0",
+    "pre-commit>=3.5.0",
 ]
 
 [tool.setuptools.packages.find]
@@ -32,3 +35,36 @@ addopts = "-ra"
 markers = [
     "integration: tests that call a live external API",
 ]
+
+[tool.ruff]
+line-length = 110
+target-version = "py311"
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # pyflakes
+    "I",   # isort (import sorting)
+    "UP",  # pyupgrade
+    "B",   # flake8-bugbear
+]
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+plugins = ["pydantic.mypy"]
+files = ["src", "tests"]
+
+# allure-pytest ships decorators (epic/feature/story/title/severity, etc.) without type
+# annotations. Under strict mode that flags every decorated test as "untyped" — noise from
+# the library, not a real typing gap in our code — so this one strict check is relaxed
+# specifically for the test suite, which is the only place these decorators are used.
+[[tool.mypy.overrides]]
+module = ["tests.*"]
+disallow_untyped_decorators = false
+disallow_untyped_calls = false
+
+[[tool.mypy.overrides]]
+# Third-party test/report libraries without bundled or stub-package type info.
+module = ["respx.*", "allure.*"]
+ignore_missing_imports = true

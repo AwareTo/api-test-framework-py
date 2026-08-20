@@ -1,7 +1,8 @@
 """Service client abstracting the ReqRes /users endpoint."""
+
 from __future__ import annotations
 
-from typing import Any, Type, TypeVar
+from typing import Any, TypeVar
 
 from pydantic import BaseModel
 from pydantic import ValidationError as PydanticValidationError
@@ -37,7 +38,7 @@ class UserClient(BaseClient):
         return response.status_code == 204
 
     @staticmethod
-    def _validate(model: Type[ModelT], data: Any) -> ModelT:
+    def _validate(model: type[ModelT], data: Any) -> ModelT:
         """Map raw response data onto a Pydantic model, translating schema mismatches
         into a framework-specific error instead of letting a raw pydantic one leak out."""
         try:

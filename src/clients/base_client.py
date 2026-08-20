@@ -1,18 +1,19 @@
 """Base HTTP client wrapping httpx with shared request/response handling."""
+
 from __future__ import annotations
 
 import json
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from types import TracebackType
-from typing import Any, Optional, Type
+from typing import Any
 
 import allure
 import httpx
 
 from src.exceptions import APIError, NotFoundError, UnauthorizedError, ValidationError
 
-_STATUS_TO_EXCEPTION: dict[int, Type[APIError]] = {
+_STATUS_TO_EXCEPTION: dict[int, type[APIError]] = {
     401: UnauthorizedError,
     404: NotFoundError,
     422: ValidationError,
@@ -39,7 +40,7 @@ class BaseClient:
     """Thin wrapper around httpx.Client providing shared headers, error handling,
     and lifecycle management for concrete service clients to build on."""
 
-    def __init__(self, base_url: str, timeout: int = 10, api_key: Optional[str] = None) -> None:
+    def __init__(self, base_url: str, timeout: int = 10, api_key: str | None = None) -> None:
         self.base_url = base_url
         self.timeout = timeout
         headers = {"Content-Type": "application/json"}
@@ -79,7 +80,7 @@ class BaseClient:
 
             attempt = 1
             while True:
-                started_at = datetime.now(timezone.utc)
+                started_at = datetime.now(UTC)
                 try:
                     response = send(path, **kwargs)
                 except httpx.TransportError as exc:
@@ -103,9 +104,7 @@ class BaseClient:
                         self._attach_http_details(response, started_at)
 
                 should_retry = (
-                    retryable
-                    and response.status_code in _RETRYABLE_STATUS_CODES
-                    and attempt < _MAX_ATTEMPTS
+                    retryable and response.status_code in _RETRYABLE_STATUS_CODES and attempt < _MAX_ATTEMPTS
                 )
                 if not should_retry:
                     return self._check_response(response)
@@ -131,7 +130,7 @@ class BaseClient:
         """Attach diagnostic context for a connection-level failure (timeout, reset, etc.)
         where no response was ever received, so the report still shows what was attempted."""
         try:
-            request: Optional[httpx.Request] = exc.request
+            request: httpx.Request | None = exc.request
         except RuntimeError:
             # httpx raises rather than returning None when `.request` was never attached
             # (e.g. the connection failed before a Request object could be built).
@@ -160,8 +159,7 @@ class BaseClient:
     @staticmethod
     def _redact_headers(headers: httpx.Headers) -> dict[str, str]:
         return {
-            key: (_REDACTED if key.lower() in _SENSITIVE_HEADERS else value)
-            for key, value in headers.items()
+            key: (_REDACTED if key.lower() in _SENSITIVE_HEADERS else value) for key, value in headers.items()
         }
 
     @staticmethod
@@ -203,13 +201,13 @@ class BaseClient:
     def close(self) -> None:
         self._client.close()
 
-    def __enter__(self) -> "BaseClient":
+    def __enter__(self) -> BaseClient:
         return self
 
     def __exit__(
         self,
-        exc_type: Optional[Type[BaseException]],
-        exc_value: Optional[BaseException],
-        traceback: Optional[TracebackType],
+        exc_type: type[BaseException] | None,
+        exc_value: BaseException | None,
+        traceback: TracebackType | None,
     ) -> None:
         self.close()

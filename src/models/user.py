@@ -1,4 +1,5 @@
 """Pydantic models for the User resource (ReqRes API)."""
+
 from pydantic import BaseModel, ConfigDict
 
 

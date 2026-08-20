@@ -1,4 +1,7 @@
 """Unit tests for BaseClient using respx to mock HTTP responses."""
+
+from collections.abc import Iterator
+
 import httpx
 import pytest
 import respx
@@ -10,7 +13,7 @@ BASE_URL = "https://example.test"
 
 
 @pytest.fixture
-def base_client() -> BaseClient:
+def base_client() -> Iterator[BaseClient]:
     client = BaseClient(base_url=BASE_URL, timeout=5)
     yield client
     client.close()

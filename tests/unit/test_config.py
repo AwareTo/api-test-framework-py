@@ -1,4 +1,5 @@
 """Unit tests for the Settings configuration module."""
+
 from pydantic import HttpUrl, SecretStr
 from pytest import MonkeyPatch
 
@@ -57,5 +58,6 @@ def test_api_key_is_kept_secret_in_repr(monkeypatch: MonkeyPatch) -> None:
 
     result = Settings(_env_file=None)
 
+    assert isinstance(result.api_key, SecretStr)
     assert "super-secret-value" not in repr(result.api_key)
     assert result.api_key.get_secret_value() == "super-secret-value"

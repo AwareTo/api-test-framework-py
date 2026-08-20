@@ -1,4 +1,7 @@
 """Integration tests exercising the real API (marked slow; requires network access)."""
+
+from collections.abc import Iterator
+
 import pytest
 
 from src.clients.user_client import UserClient
@@ -8,7 +11,7 @@ pytestmark = pytest.mark.integration
 
 
 @pytest.fixture
-def user_client() -> UserClient:
+def user_client() -> Iterator[UserClient]:
     client = UserClient()
     yield client
     client.close()

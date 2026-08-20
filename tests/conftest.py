@@ -1,10 +1,10 @@
 """Shared pytest fixtures and Allure environment setup for the test suite."""
-import os
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Iterator
 
-import allure
+import os
+from collections.abc import Iterator
+from datetime import UTC, datetime
+from pathlib import Path
+
 import pytest
 from faker import Faker
 
@@ -44,7 +44,7 @@ def pytest_configure(config: pytest.Config) -> None:
     props = {
         "Environment": settings.environment,
         "Base URL": str(settings.base_url),
-        "Executed At": datetime.now(timezone.utc).isoformat(timespec="seconds"),
+        "Executed At": datetime.now(UTC).isoformat(timespec="seconds"),
         "Python": os.popen("python --version").read().strip(),  # noqa: S605
     }
 

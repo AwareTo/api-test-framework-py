@@ -1,5 +1,7 @@
 """Unit tests for UserClient using respx to mock HTTP calls."""
+
 import json
+from collections.abc import Iterator
 
 import allure
 import httpx
@@ -15,7 +17,7 @@ BASE_URL = str(settings.base_url).rstrip("/")
 
 
 @pytest.fixture
-def user_client() -> UserClient:
+def user_client() -> Iterator[UserClient]:
     client = UserClient()
     yield client
     client.close()

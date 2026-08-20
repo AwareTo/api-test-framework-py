@@ -1,4 +1,5 @@
 """Live API tests for UserClient against the ReqRes service."""
+
 import allure
 import pytest
 
@@ -10,7 +11,6 @@ from src.models.user import UserCreate, UserCreateResponse, UserResponse
 @allure.epic("User API")
 @allure.feature("Get User")
 class TestGetUser:
-
     @allure.story("Successful retrieval")
     @allure.title("GET /api/users/2 returns a valid UserResponse")
     @allure.severity(allure.severity_level.CRITICAL)
@@ -38,13 +38,10 @@ class TestGetUser:
 @allure.epic("User API")
 @allure.feature("Create User")
 class TestCreateUser:
-
     @allure.story("Successful creation")
     @allure.title("POST /api/users returns UserCreateResponse with matching fields")
     @allure.severity(allure.severity_level.CRITICAL)
-    def test_create_user_success(
-        self, user_client: UserClient, random_user_payload: UserCreate
-    ) -> None:
+    def test_create_user_success(self, user_client: UserClient, random_user_payload: UserCreate) -> None:
         with allure.step(f"Create user: {random_user_payload.name}, {random_user_payload.job}"):
             result = user_client.create_user(random_user_payload)
 
@@ -58,7 +55,6 @@ class TestCreateUser:
 @allure.epic("User API")
 @allure.feature("Delete User")
 class TestDeleteUser:
-
     @allure.story("Successful deletion")
     @allure.title("DELETE /api/users/2 returns True")
     @allure.severity(allure.severity_level.NORMAL)

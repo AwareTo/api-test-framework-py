@@ -11,6 +11,7 @@ Given this run's freshly-generated Allure report, it:
 Stdlib-only by design — this runs in CI before dependencies are guaranteed installed, and keeps the
 publish step dependency-free.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -19,7 +20,6 @@ import shutil
 from dataclasses import dataclass
 from html import escape
 from pathlib import Path
-from typing import Optional
 
 
 @dataclass(frozen=True)
@@ -73,7 +73,7 @@ def kept_run_numbers(site_dir: Path) -> list[int]:
     )
 
 
-def read_summary(site_dir: Path, run_number: int) -> Optional[dict]:
+def read_summary(site_dir: Path, run_number: int) -> dict | None:
     summary_path = site_dir / "runs" / str(run_number) / "widgets" / "summary.json"
     if not summary_path.exists():
         return None
@@ -83,7 +83,7 @@ def read_summary(site_dir: Path, run_number: int) -> Optional[dict]:
         return None
 
 
-def read_meta(site_dir: Path, run_number: int) -> Optional[dict]:
+def read_meta(site_dir: Path, run_number: int) -> dict | None:
     meta_path = site_dir / "runs" / str(run_number) / "meta.json"
     if not meta_path.exists():
         return None
@@ -118,7 +118,11 @@ def _row_html(site_dir: Path, run_number: int, repo: str) -> str:
     summary = read_summary(site_dir, run_number)
     if summary is not None:
         stats = summary.get("statistic", {})
-        counts = f"{stats.get('passed', '?')} passed / {stats.get('failed', '?')} failed / {stats.get('total', '?')} total"
+        counts = (
+            f"{stats.get('passed', '?')} passed / "
+            f"{stats.get('failed', '?')} failed / "
+            f"{stats.get('total', '?')} total"
+        )
     else:
         counts = "—"
 
@@ -167,7 +171,9 @@ def write_index(site_dir: Path, repo: str) -> None:
   <p><a href="latest/index.html"><strong>&#128202; Latest report</strong></a></p>
   <table>
     <thead>
-      <tr><th>Run</th><th>Commit</th><th>Trigger</th><th>Actor</th><th>Timestamp (UTC)</th><th>Result</th></tr>
+      <tr>
+        <th>Run</th><th>Commit</th><th>Trigger</th><th>Actor</th><th>Timestamp (UTC)</th><th>Result</th>
+      </tr>
     </thead>
     <tbody>
       {rows}
