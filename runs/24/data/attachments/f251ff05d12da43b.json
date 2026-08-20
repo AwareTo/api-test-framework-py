@@ -1,0 +1,13 @@
+{
+  "method": "GET",
+  "url": "https://reqres.in/api/users/2",
+  "headers": {
+    "host": "reqres.in",
+    "accept": "*/*",
+    "accept-encoding": "gzip, deflate",
+    "connection": "keep-alive",
+    "user-agent": "python-httpx/0.28.1",
+    "content-type": "application/json"
+  },
+  "body": null
+}

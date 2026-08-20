@@ -1,0 +1,15 @@
+{
+  "timestamp": "2026-08-20T10:40:50.778+00:00",
+  "status_code": 201,
+  "latency_ms": 1.1,
+  "headers": {
+    "content-length": "84",
+    "content-type": "application/json"
+  },
+  "body": {
+    "name": "morpheus",
+    "job": "leader",
+    "id": "123",
+    "createdAt": "2026-08-09T12:00:00.000Z"
+  }
+}
