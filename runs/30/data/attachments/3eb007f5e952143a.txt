@@ -1,0 +1,2 @@
+DEBUG    src.clients.base_client:base_client.py:99 {'method': 'POST', 'path': '/api/login', 'attempt': 1, 'event': 'http_request_started', 'logger': 'src.clients.base_client', 'level': 'debug', 'timestamp': '2026-08-21T03:48:26.790556Z'}
+INFO     src.clients.base_client:base_client.py:145 {'method': 'POST', 'path': '/api/login', 'attempt': 1, 'status_code': 200, 'latency_ms': 161.5, 'event': 'http_response_received', 'logger': 'src.clients.base_client', 'level': 'info', 'timestamp': '2026-08-21T03:48:26.952952Z'}

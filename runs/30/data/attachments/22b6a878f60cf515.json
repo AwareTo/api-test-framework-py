@@ -1,0 +1,79 @@
+{
+  "timestamp": "2026-08-21T03:48:27.165+00:00",
+  "status_code": 200,
+  "latency_ms": 17.9,
+  "headers": {
+    "date": "Fri, 21 Aug 2026 03:48:27 GMT",
+    "content-type": "application/json; charset=utf-8",
+    "transfer-encoding": "chunked",
+    "connection": "keep-alive",
+    "access-control-allow-origin": "*",
+    "cache-control": "public, max-age=14400, s-maxage=60",
+    "cdn-cache-control": "max-age=60",
+    "cross-origin-opener-policy": "same-origin",
+    "cross-origin-resource-policy": "same-origin",
+    "etag": "W/\"309-xht0adi+2R3nyR08DqinqzlyEM0\"",
+    "nel": "{\"report_to\":\"heroku-nel\",\"response_headers\":[\"Via\"],\"max_age\":3600,\"success_fraction\":0.01,\"failure_fraction\":0.1}",
+    "origin-agent-cluster": "?1",
+    "ratelimit-limit": "20",
+    "ratelimit-policy": "20;w=60",
+    "ratelimit-remaining": "19",
+    "ratelimit-reset": "60",
+    "referrer-policy": "strict-origin-when-cross-origin",
+    "report-to": "{\"group\":\"heroku-nel\",\"endpoints\":[{\"url\":\"https://nel.heroku.com/reports?s=jmhQb6iiQsfctxf2fDLhDb8trjxJgrzItZKyO9TjhUM%3D\\u0026sid=c4c9725f-1ab0-44d8-820f-430df2718e11\\u0026ts=1787284084\"}],\"max_age\":3600}",
+    "reporting-endpoints": "heroku-nel=\"https://nel.heroku.com/reports?s=jmhQb6iiQsfctxf2fDLhDb8trjxJgrzItZKyO9TjhUM%3D&sid=c4c9725f-1ab0-44d8-820f-430df2718e11&ts=1787284084\"",
+    "server": "cloudflare",
+    "strict-transport-security": "max-age=31536000; includeSubDomains",
+    "via": "1.1 heroku-router",
+    "x-content-type-options": "nosniff",
+    "x-dns-prefetch-control": "off",
+    "x-download-options": "noopen",
+    "x-frame-options": "DENY",
+    "x-permitted-cross-domain-policies": "none",
+    "x-powered-by": "ReqRes.in - Deploy backends in 30 seconds",
+    "x-ratelimit-limit": "250",
+    "x-ratelimit-remaining": "176",
+    "x-ratelimit-reset": "1787356800",
+    "x-reqres-docs": "https://reqres.in",
+    "x-reqres-message": "This API is powered by ReqRes. Deploy your own backend in 30 seconds!",
+    "x-reqres-templates": "https://app.reqres.in/templates",
+    "x-reqres-tip": "Add real user auth to your app with magic codes - reqres.in/docs",
+    "x-reqres-trial": "true",
+    "x-reqres-trial-days-remaining": "0",
+    "x-reqres-trial-expires": "2026-04-03T17:42:56.584Z",
+    "x-reqres-upgrade": "https://app.reqres.in/upgrade",
+    "x-request-id": "16837cea-4fdc-e726-f2aa-258e1cfd85a5",
+    "x-robots-tag": "noindex, nofollow",
+    "x-xss-protection": "0",
+    "age": "23",
+    "cf-cache-status": "HIT",
+    "content-encoding": "gzip",
+    "cf-ray": "a2e6a985dc019e01-IAD"
+  },
+  "body": {
+    "data": {
+      "id": 2,
+      "email": "janet.weaver@reqres.in",
+      "first_name": "Janet",
+      "last_name": "Weaver",
+      "avatar": "https://reqres.in/img/faces/2-image.jpg"
+    },
+    "support": {
+      "url": "https://benhowdle.im/first-cto-playbook?utm_source=reqres&utm_medium=json&utm_campaign=referral",
+      "text": "Become a better CTO. A playbook of painful stories and practical advice from a two-time startup CTO."
+    },
+    "_meta": {
+      "powered_by": "ReqRes",
+      "docs_url": "https://app.reqres.in/documentation",
+      "upgrade_url": "https://app.reqres.in/upgrade",
+      "example_url": "https://app.reqres.in/examples/notes-app",
+      "variant": "v1_a",
+      "message": "Your data persists here. Add auth, logs, and custom schemas to build a real backend.",
+      "cta": {
+        "label": "See example app",
+        "url": "https://app.reqres.in/examples/notes-app"
+      },
+      "context": "legacy_success"
+    }
+  }
+}

@@ -1,0 +1,18 @@
+{
+  "method": "POST",
+  "url": "https://reqres.in/api/users",
+  "headers": {
+    "host": "reqres.in",
+    "accept": "*/*",
+    "accept-encoding": "gzip, deflate",
+    "connection": "keep-alive",
+    "user-agent": "python-httpx/0.28.1",
+    "content-type": "application/json",
+    "x-api-key": "***REDACTED***",
+    "content-length": "52"
+  },
+  "body": {
+    "name": "James Ferguson",
+    "job": "Editor, film/video"
+  }
+}
