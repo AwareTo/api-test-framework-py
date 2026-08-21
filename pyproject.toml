@@ -36,6 +36,7 @@ testpaths = ["tests"]
 addopts = "-ra"
 markers = [
     "integration: tests that call a live external API",
+    "contract: tests that verify request/response shape against the agreed API contract",
 ]
 
 [tool.ruff]
