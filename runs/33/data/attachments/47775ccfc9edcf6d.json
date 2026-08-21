@@ -1,0 +1,17 @@
+{
+  "method": "POST",
+  "url": "https://reqres.in/api/login",
+  "headers": {
+    "host": "reqres.in",
+    "accept": "*/*",
+    "accept-encoding": "gzip, deflate",
+    "connection": "keep-alive",
+    "user-agent": "python-httpx/0.28.1",
+    "content-type": "application/json",
+    "content-length": "54"
+  },
+  "body": {
+    "email": "eve.holt@reqres.in",
+    "password": "***REDACTED***"
+  }
+}

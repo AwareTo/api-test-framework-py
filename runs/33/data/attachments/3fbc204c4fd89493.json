@@ -1,0 +1,12 @@
+{
+  "timestamp": "2026-08-21T05:52:54.808+00:00",
+  "status_code": 200,
+  "latency_ms": 1.5,
+  "headers": {
+    "content-length": "15",
+    "content-type": "application/json"
+  },
+  "body": {
+    "status": "ok"
+  }
+}
