@@ -1,0 +1,7 @@
+{
+  "timestamp": "2026-08-21T05:39:44.742+00:00",
+  "method": "GET",
+  "path": "/always-down",
+  "error_type": "ConnectError",
+  "error_message": "connection refused"
+}

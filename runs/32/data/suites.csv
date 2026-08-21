@@ -1,0 +1,55 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"_validate() lives on BaseClient (not any one concrete client) precisely so this
+    works standalone, with no HTTP call and no subclass involved.","0","_validate() lives on BaseClient (not any one concrete client) precisely so this
+    works standalone, with no HTTP call and no subclass involved.","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"","0","test_api_key_defaults_to_none_and_is_optional","tests.unit","2026-08-21","passed","2026-08-21","","test_config","",""
+"POST is never retried on a transport error either — a dropped connection gives even
+    less certainty than a 503 about whether the server processed the create.","33","POST is never retried on a transport error either — a dropped connection gives even
+    less certainty than a 503 about whether the server processed the create.","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"","608","test_get_raises_api_error_after_exhausting_retries_on_503","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"","5","test_get_raises_not_found_error_on_404","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"","206","test_get_retries_on_transport_error_then_succeeds","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"","1","test_sanity","tests.unit","2026-08-21","passed","2026-08-21","","test_sanity","",""
+"","5","register() raises SchemaValidationError when the response doesn't match RegisterResponse","tests.unit","2026-08-21","passed","2026-08-21","","test_auth_client","",""
+"Proves BaseClient's _STATUS_TO_EXCEPTION mapping is genuinely shared: no auth-specific
+    exception handling was added anywhere, yet a 401 from a completely different endpoint
+    still raises the same UnauthorizedError that UserClient relies on.","5","Proves BaseClient's _STATUS_TO_EXCEPTION mapping is genuinely shared: no auth-specific
+    exception handling was added anywhere, yet a 401 from a completely different endpoint
+    still raises the same UnauthorizedError that UserClient relies on.","tests.unit","2026-08-21","passed","2026-08-21","","test_auth_client","",""
+"","5","test_get_returns_response_on_200","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"","4","register() sends correct JSON body and maps response onto RegisterResponse","tests.unit","2026-08-21","passed","2026-08-21","","test_auth_client","",""
+"","2","delete_user() returns True on 204 No Content","tests.unit","2026-08-21","passed","2026-08-21","","test_user_client","",""
+"","4","login() sends correct JSON body and maps response onto LoginResponse","tests.unit","2026-08-21","passed","2026-08-21","","test_auth_client","",""
+"","3","test_get_raises_api_error_on_500","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"","0","test_api_key_is_kept_secret_in_repr","tests.unit","2026-08-21","passed","2026-08-21","","test_config","",""
+"POST /api/register returns a token for a valid known user.","349","POST /api/register returns a token for a valid known user.","tests.api","2026-08-21","passed","2026-08-21","TestRegister","test_auth","",""
+"POST is never retried, even on a transient-looking 503 — retrying a create risks
+    creating a duplicate resource since we can't tell if the original was processed.","22","POST is never retried, even on a transient-looking 503 — retrying a create risks
+    creating a duplicate resource since we can't tell if the original was processed.","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"","4","register() raises APIError on 400 (missing password)","tests.unit","2026-08-21","passed","2026-08-21","","test_auth_client","",""
+"POST /api/register without a password raises APIError.","315","POST /api/register without a password raises APIError.","tests.api","2026-08-21","passed","2026-08-21","TestRegister","test_auth","",""
+"","3","get_user() raises NotFoundError on 404","tests.unit","2026-08-21","passed","2026-08-21","","test_user_client","",""
+"POST /api/login without a password raises APIError.","303","POST /api/login without a password raises APIError.","tests.api","2026-08-21","passed","2026-08-21","TestLogin","test_auth","",""
+"POST /api/users returns UserCreateResponse with matching fields.","163","POST /api/users returns UserCreateResponse with matching fields.","tests.api","2026-08-21","passed","2026-08-21","TestCreateUser","test_users","",""
+"","5","login() raises APIError on 400 (missing password)","tests.unit","2026-08-21","passed","2026-08-21","","test_auth_client","",""
+"With no .env file and no environment variables, fields fall back to their
+    declared defaults.","1","With no .env file and no environment variables, fields fall back to their
+    declared defaults.","tests.unit","2026-08-21","passed","2026-08-21","","test_config","",""
+"","4","get_user() raises SchemaValidationError when the response doesn't match UserResponse","tests.unit","2026-08-21","passed","2026-08-21","","test_user_client","",""
+"The module-level `settings` singleton should load with the documented defaults
+    when no environment variables or .env overrides are present beyond what ships
+    in the repo's own .env file (which mirrors the defaults).","0","The module-level `settings` singleton should load with the documented defaults
+    when no environment variables or .env overrides are present beyond what ships
+    in the repo's own .env file (which mirrors the defaults).","tests.unit","2026-08-21","passed","2026-08-21","","test_config","",""
+"","3","get_user() maps JSON response onto UserResponse model","tests.unit","2026-08-21","passed","2026-08-21","","test_user_client","",""
+"","21","test_context_manager_closes_client","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"","206","test_get_retries_on_503_then_succeeds","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"GET /api/users/9999 raises NotFoundError.","323","GET /api/users/9999 raises NotFoundError.","tests.api","2026-08-21","passed","2026-08-21","TestGetUser","test_users","",""
+"","609","test_get_raises_transport_error_after_exhausting_retries","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"GET /api/users/2 returns a valid UserResponse.","301","GET /api/users/2 returns a valid UserResponse.","tests.api","2026-08-21","passed","2026-08-21","TestGetUser","test_users","",""
+"POST /api/login returns a token for a valid known user.","306","POST /api/login returns a token for a valid known user.","tests.api","2026-08-21","passed","2026-08-21","TestLogin","test_auth","",""
+"","2","test_post_sends_json_body_and_default_headers","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"DELETE /api/users/2 returns True.","161","DELETE /api/users/2 returns True.","tests.api","2026-08-21","passed","2026-08-21","TestDeleteUser","test_users","",""
+"","2","create_user() sends correct JSON body and maps response onto UserCreateResponse","tests.unit","2026-08-21","passed","2026-08-21","","test_user_client","",""
+"","0","test_validate_raises_schema_validation_error_on_mismatched_data","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"Environment variables take priority over field defaults.","1","Environment variables take priority over field defaults.","tests.unit","2026-08-21","passed","2026-08-21","","test_config","",""
