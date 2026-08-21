@@ -1,0 +1,2 @@
+DEBUG    src.clients.base_client:base_client.py:99 {'method': 'GET', 'path': '/api/users/2', 'attempt': 1, 'event': 'http_request_started', 'logger': 'src.clients.base_client', 'level': 'debug', 'timestamp': '2026-08-21T05:24:24.366861Z'}
+INFO     src.clients.base_client:base_client.py:145 {'method': 'GET', 'path': '/api/users/2', 'attempt': 1, 'status_code': 200, 'latency_ms': 0.2, 'event': 'http_response_received', 'logger': 'src.clients.base_client', 'level': 'info', 'timestamp': '2026-08-21T05:24:24.367638Z'}

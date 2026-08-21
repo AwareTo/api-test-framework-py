@@ -1,0 +1,10 @@
+{
+  "timestamp": "2026-08-21T05:24:24.319+00:00",
+  "status_code": 500,
+  "latency_ms": 0.3,
+  "headers": {
+    "content-length": "12",
+    "content-type": "text/plain; charset=utf-8"
+  },
+  "body": "server error"
+}

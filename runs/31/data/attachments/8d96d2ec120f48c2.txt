@@ -1,0 +1,2 @@
+DEBUG    src.clients.base_client:base_client.py:99 {'method': 'DELETE', 'path': '/api/users/2', 'attempt': 1, 'event': 'http_request_started', 'logger': 'src.clients.base_client', 'level': 'debug', 'timestamp': '2026-08-21T05:24:27.287551Z'}
+INFO     src.clients.base_client:base_client.py:145 {'method': 'DELETE', 'path': '/api/users/2', 'attempt': 1, 'status_code': 204, 'latency_ms': 166.4, 'event': 'http_response_received', 'logger': 'src.clients.base_client', 'level': 'info', 'timestamp': '2026-08-21T05:24:27.454696Z'}
