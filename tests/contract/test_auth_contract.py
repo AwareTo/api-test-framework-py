@@ -14,7 +14,6 @@ from tests.steps.auth.auth_helper import assert_rejected_with_400
 from tests.steps.contract_helper import assert_contains_fields, assert_field_types
 
 
-@pytest.mark.integration
 @pytest.mark.contract
 class TestLoginContract:
     def test_login_response_matches_contract(self, auth_client: AuthClient) -> None:

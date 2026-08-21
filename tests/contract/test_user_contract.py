@@ -19,7 +19,6 @@ from tests.steps.contract_helper import assert_contains_fields, assert_field_typ
 from tests.steps.user.user_endpoint import create_user_raw, get_user_raw
 
 
-@pytest.mark.integration
 @pytest.mark.contract
 class TestGetUserResponseContract:
     def test_get_user_response_matches_contract(self, user_client: UserClient) -> None:
@@ -31,7 +30,6 @@ class TestGetUserResponseContract:
         )
 
 
-@pytest.mark.integration
 @pytest.mark.contract
 class TestCreateUserContract:
     def test_create_user_response_matches_contract(
