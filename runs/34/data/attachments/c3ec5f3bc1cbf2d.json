@@ -1,0 +1,7 @@
+{
+  "timestamp": "2026-08-21T05:58:47.730+00:00",
+  "method": "GET",
+  "path": "/flaky-connection",
+  "error_type": "ConnectTimeout",
+  "error_message": "connection timed out"
+}

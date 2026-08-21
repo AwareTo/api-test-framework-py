@@ -1,0 +1,61 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","5","register() sends correct JSON body and maps response onto RegisterResponse","tests.unit","2026-08-21","passed","2026-08-21","","test_auth_client","",""
+"GET /api/users/2 returns a valid UserResponse.","302","GET /api/users/2 returns a valid UserResponse.","tests.api","2026-08-21","passed","2026-08-21","TestGetUser","test_users","",""
+"","2","test_get_raises_api_error_on_500","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"","204","test_get_retries_on_transport_error_then_succeeds","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"GET /api/users/9999 raises NotFoundError.","305","GET /api/users/9999 raises NotFoundError.","tests.api","2026-08-21","passed","2026-08-21","TestGetUser","test_users","",""
+"POST /api/login still rejects a payload missing 'password' entirely.","180","POST /api/login still rejects a payload missing 'password' entirely.","tests.contract","2026-08-21","passed","2026-08-21","TestLoginContract","test_auth_contract","",""
+"","5","register() raises SchemaValidationError when the response doesn't match RegisterResponse","tests.unit","2026-08-21","passed","2026-08-21","","test_auth_client","",""
+"","1","test_validate_raises_schema_validation_error_on_mismatched_data","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"","3","delete_user() returns True on 204 No Content","tests.unit","2026-08-21","passed","2026-08-21","","test_user_client","",""
+"POST /api/login returns a token for a valid known user.","219","POST /api/login returns a token for a valid known user.","tests.api","2026-08-21","passed","2026-08-21","TestLogin","test_auth","",""
+"","2","test_post_sends_json_body_and_default_headers","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"","4","test_get_returns_response_on_200","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"POST /api/users still accepts exactly our current required fields.","293","POST /api/users still accepts exactly our current required fields.","tests.contract","2026-08-21","passed","2026-08-21","TestCreateUserContract","test_user_contract","",""
+"","607","test_get_raises_transport_error_after_exhausting_retries","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"","2","get_user() raises NotFoundError on 404","tests.unit","2026-08-21","passed","2026-08-21","","test_user_client","",""
+"_validate() lives on BaseClient (not any one concrete client) precisely so this
+    works standalone, with no HTTP call and no subclass involved.","0","_validate() lives on BaseClient (not any one concrete client) precisely so this
+    works standalone, with no HTTP call and no subclass involved.","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"DELETE /api/users/2 returns True.","174","DELETE /api/users/2 returns True.","tests.api","2026-08-21","passed","2026-08-21","TestDeleteUser","test_users","",""
+"","608","test_get_raises_api_error_after_exhausting_retries_on_503","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"","2","get_user() maps JSON response onto UserResponse model","tests.unit","2026-08-21","passed","2026-08-21","","test_user_client","",""
+"POST /api/login response contains the contracted fields.","172","POST /api/login response contains the contracted fields.","tests.contract","2026-08-21","passed","2026-08-21","TestLoginContract","test_auth_contract","",""
+"","4","login() raises APIError on 400 (missing password)","tests.unit","2026-08-21","passed","2026-08-21","","test_auth_client","",""
+"GET /api/users/2 response contains the contracted fields.","288","GET /api/users/2 response contains the contracted fields.","tests.contract","2026-08-21","passed","2026-08-21","TestGetUserResponseContract","test_user_contract","",""
+"With no .env file and no environment variables, fields fall back to their
+    declared defaults.","1","With no .env file and no environment variables, fields fall back to their
+    declared defaults.","tests.unit","2026-08-21","passed","2026-08-21","","test_config","",""
+"POST /api/users returns UserCreateResponse with matching fields.","287","POST /api/users returns UserCreateResponse with matching fields.","tests.api","2026-08-21","passed","2026-08-21","TestCreateUser","test_users","",""
+"","19","test_context_manager_closes_client","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"","0","test_api_key_defaults_to_none_and_is_optional","tests.unit","2026-08-21","passed","2026-08-21","","test_config","",""
+"Proves BaseClient's _STATUS_TO_EXCEPTION mapping is genuinely shared: no auth-specific
+    exception handling was added anywhere, yet a 401 from a completely different endpoint
+    still raises the same UnauthorizedError that UserClient relies on.","4","Proves BaseClient's _STATUS_TO_EXCEPTION mapping is genuinely shared: no auth-specific
+    exception handling was added anywhere, yet a 401 from a completely different endpoint
+    still raises the same UnauthorizedError that UserClient relies on.","tests.unit","2026-08-21","passed","2026-08-21","","test_auth_client","",""
+"POST /api/login without a password raises APIError.","286","POST /api/login without a password raises APIError.","tests.api","2026-08-21","passed","2026-08-21","TestLogin","test_auth","",""
+"POST /api/register without a password raises APIError.","296","POST /api/register without a password raises APIError.","tests.api","2026-08-21","passed","2026-08-21","TestRegister","test_auth","",""
+"","2","create_user() sends correct JSON body and maps response onto UserCreateResponse","tests.unit","2026-08-21","passed","2026-08-21","","test_user_client","",""
+"POST is never retried, even on a transient-looking 503 — retrying a create risks
+    creating a duplicate resource since we can't tell if the original was processed.","29","POST is never retried, even on a transient-looking 503 — retrying a create risks
+    creating a duplicate resource since we can't tell if the original was processed.","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"","4","login() sends correct JSON body and maps response onto LoginResponse","tests.unit","2026-08-21","passed","2026-08-21","","test_auth_client","",""
+"The module-level `settings` singleton should load with the documented defaults
+    when no environment variables or .env overrides are present beyond what ships
+    in the repo's own .env file (which mirrors the defaults).","0","The module-level `settings` singleton should load with the documented defaults
+    when no environment variables or .env overrides are present beyond what ships
+    in the repo's own .env file (which mirrors the defaults).","tests.unit","2026-08-21","passed","2026-08-21","","test_config","",""
+"","1","test_api_key_is_kept_secret_in_repr","tests.unit","2026-08-21","passed","2026-08-21","","test_config","",""
+"","2","get_user() raises SchemaValidationError when the response doesn't match UserResponse","tests.unit","2026-08-21","passed","2026-08-21","","test_user_client","",""
+"","206","test_get_retries_on_503_then_succeeds","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"","5","test_get_raises_not_found_error_on_404","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"POST /api/register returns a token for a valid known user.","357","POST /api/register returns a token for a valid known user.","tests.api","2026-08-21","passed","2026-08-21","TestRegister","test_auth","",""
+"POST is never retried on a transport error either — a dropped connection gives even
+    less certainty than a 503 about whether the server processed the create.","58","POST is never retried on a transport error either — a dropped connection gives even
+    less certainty than a 503 about whether the server processed the create.","tests.unit","2026-08-21","passed","2026-08-21","","test_base_client","",""
+"Environment variables take priority over field defaults.","1","Environment variables take priority over field defaults.","tests.unit","2026-08-21","passed","2026-08-21","","test_config","",""
+"POST /api/users response contains the contracted fields.","306","POST /api/users response contains the contracted fields.","tests.contract","2026-08-21","passed","2026-08-21","TestCreateUserContract","test_user_contract","",""
+"POST /api/users still tolerates an unrecognized extra field.","297","POST /api/users still tolerates an unrecognized extra field.","tests.contract","2026-08-21","passed","2026-08-21","TestCreateUserContract","test_user_contract","",""
+"","0","test_sanity","tests.unit","2026-08-21","passed","2026-08-21","","test_sanity","",""
+"","4","register() raises APIError on 400 (missing password)","tests.unit","2026-08-21","passed","2026-08-21","","test_auth_client","",""
