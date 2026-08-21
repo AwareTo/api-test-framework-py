@@ -102,6 +102,25 @@ def pytest_configure(config: pytest.Config) -> None:
 
 
 @pytest.hookimpl(wrapper=True)
+def pytest_runtest_call(item: pytest.Item) -> Generator[None, None, None]:
+    """Use each test's one-line docstring as its Allure report title.
+
+    Replaces an explicit `@allure.title(...)` on every test: the docstring already
+    has to describe what the test does, so it doubles as the title with no extra
+    decorator. Tests without a docstring keep Allure's default (the test's node ID).
+
+    Must run during the *call* phase, not fixture setup — an autouse fixture calling
+    `allure.dynamic.title(...)` gets silently overwritten, because allure-pytest's own
+    `pytest_runtest_setup` hook unconditionally resets the title from the item's name
+    right after setup finishes, after any fixture has already run.
+    """
+    doc = item.function.__doc__ if isinstance(item, pytest.Function) else None
+    if doc:
+        allure.dynamic.title(doc.strip())
+    return (yield)
+
+
+@pytest.hookimpl(wrapper=True)
 def pytest_runtest_makereport(
     item: pytest.Item, call: pytest.CallInfo[None]
 ) -> Generator[None, pytest.TestReport, pytest.TestReport]:
